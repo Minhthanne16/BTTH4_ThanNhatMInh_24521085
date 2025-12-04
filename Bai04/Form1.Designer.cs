@@ -36,6 +36,7 @@
             this.mnuLuuNoiDung = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuThoat = new System.Windows.Forms.ToolStripMenuItem();
             this.địnhDạngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDinhDangFont = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnNew = new System.Windows.Forms.ToolStripButton();
             this.btnSave = new System.Windows.Forms.ToolStripButton();
@@ -50,7 +51,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
-            this.mnuDinhDangFont = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -115,6 +115,13 @@
             this.địnhDạngToolStripMenuItem.Size = new System.Drawing.Size(74, 20);
             this.địnhDạngToolStripMenuItem.Text = "Định dạng";
             // 
+            // mnuDinhDangFont
+            // 
+            this.mnuDinhDangFont.Name = "mnuDinhDangFont";
+            this.mnuDinhDangFont.Size = new System.Drawing.Size(156, 22);
+            this.mnuDinhDangFont.Text = "Định dạng Font";
+            this.mnuDinhDangFont.Click += new System.EventHandler(this.mnuDinhDangFont_Click);
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -160,17 +167,21 @@
             // 
             // cmbFont
             // 
+            this.cmbFont.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbFont.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cmbFont.Name = "cmbFont";
             this.cmbFont.Size = new System.Drawing.Size(150, 25);
             this.cmbFont.Text = "Font";
-            this.cmbFont.Click += new System.EventHandler(this.cmbFont_SelectedIndexChanged);
+            this.cmbFont.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmbFont_KeyDown);
+            this.cmbFont.Validated += new System.EventHandler(this.cmbFont_SelectedIndexChanged);
             // 
             // cmbSize
             // 
             this.cmbSize.Name = "cmbSize";
             this.cmbSize.Size = new System.Drawing.Size(75, 25);
             this.cmbSize.Text = "Size";
-            this.cmbSize.Click += new System.EventHandler(this.cmbSize_SelectedIndexChanged);
+            this.cmbSize.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmbSize_KeyDown);
+            this.cmbSize.Validated += new System.EventHandler(this.cmbSize_SelectedIndexChanged);
             // 
             // btnBold
             // 
@@ -220,13 +231,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // mnuDinhDangFont
-            // 
-            this.mnuDinhDangFont.Name = "mnuDinhDangFont";
-            this.mnuDinhDangFont.Size = new System.Drawing.Size(180, 22);
-            this.mnuDinhDangFont.Text = "Định dạng Font";
-            this.mnuDinhDangFont.Click += new System.EventHandler(this.mnuDinhDangFont_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -237,7 +241,9 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Soạn thảo văn bản";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing_1);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

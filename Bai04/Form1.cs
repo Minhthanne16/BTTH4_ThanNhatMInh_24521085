@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Bai04
@@ -14,6 +8,7 @@ namespace Bai04
     public partial class Form1 : Form
     {
         private string duongDanHienTai = "";
+
         public Form1()
         {
             InitializeComponent();
@@ -21,39 +16,31 @@ namespace Bai04
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Load danh sách Font chữ hệ thống vào ComboBox
             foreach (FontFamily font in FontFamily.Families)
             {
                 cmbFont.Items.Add(font.Name);
             }
 
-            // Load danh sách Size (từ 8 đến 72 như đề bài)
             int[] sizes = { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
             foreach (int s in sizes)
             {
                 cmbSize.Items.Add(s);
             }
 
-            // Thiết lập mặc định: Tahoma, Size 14
             cmbFont.SelectedItem = "Tahoma";
             cmbSize.SelectedItem = 14;
             rtbVanBan.Font = new Font("Tahoma", 14);
         }
-        // 2. CHỨC NĂNG TẠO MỚI (New)
-        // Gán hàm này cho sự kiện Click của: Menu Tạo mới VÀ Button New
+
         private void XuLyTaoMoi(object sender, EventArgs e)
         {
-            rtbVanBan.Clear(); // Xóa trắng
-            duongDanHienTai = ""; // Reset đường dẫn
-
-            // Reset về Font mặc định
+            rtbVanBan.Clear();
+            duongDanHienTai = "";
             cmbFont.SelectedItem = "Tahoma";
             cmbSize.SelectedItem = 14;
             rtbVanBan.Font = new Font("Tahoma", 14);
         }
 
-        // 3. CHỨC NĂNG MỞ FILE (Open)
-        // Gán hàm này cho sự kiện Click của Menu Mở
         private void XuLyMoTapTin(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "Rich Text Format (*.rtf)|*.rtf|Text Files (*.txt)|*.txt";
@@ -63,15 +50,13 @@ namespace Bai04
                 try
                 {
                     duongDanHienTai = openFileDialog1.FileName;
-
-                    // Kiểm tra đuôi file để dùng hàm đọc phù hợp
                     if (Path.GetExtension(duongDanHienTai).ToLower() == ".txt")
                     {
                         rtbVanBan.Text = File.ReadAllText(duongDanHienTai);
                     }
                     else
                     {
-                        rtbVanBan.LoadFile(duongDanHienTai); // Mặc định đọc RTF
+                        rtbVanBan.LoadFile(duongDanHienTai);
                     }
                     MessageBox.Show("Mở file thành công!");
                 }
@@ -82,11 +67,8 @@ namespace Bai04
             }
         }
 
-        // 4. CHỨC NĂNG LƯU FILE (Save)
-        // Gán hàm này cho sự kiện Click của: Menu Lưu VÀ Button Save
         private void XuLyLuu(object sender, EventArgs e)
         {
-            // Nếu là file mới (chưa có đường dẫn) -> Hiện bảng chọn nơi lưu
             if (string.IsNullOrEmpty(duongDanHienTai))
             {
                 saveFileDialog1.Filter = "Rich Text Format (*.rtf)|*.rtf";
@@ -94,87 +76,179 @@ namespace Bai04
                 {
                     duongDanHienTai = saveFileDialog1.FileName;
                     rtbVanBan.SaveFile(duongDanHienTai);
-                    MessageBox.Show("Lưu thành công!");
+                    MessageBox.Show("Lưu file thành công!");
                 }
             }
-            else // Nếu file đã có sẵn -> Lưu đè luôn
+            else
             {
                 rtbVanBan.SaveFile(duongDanHienTai);
                 MessageBox.Show("Đã cập nhật nội dung!");
             }
         }
 
-        // 5. CHỨC NĂNG ĐỊNH DẠNG (B, I, U)
-        // Hàm dùng chung để đổi kiểu chữ
         private void DoiKieuChu(FontStyle kieuMoi)
         {
-            // Kiểm tra xem có đang chọn văn bản không
             if (rtbVanBan.SelectionFont != null)
             {
                 Font fontCu = rtbVanBan.SelectionFont;
                 FontStyle styleMoi;
 
-                // Nếu đang có kiểu đó rồi thì bỏ đi, chưa có thì thêm vào (Toán tử XOR)
                 if (fontCu.Style.HasFlag(kieuMoi))
-                    styleMoi = fontCu.Style & ~kieuMoi; // Bỏ
+                    styleMoi = fontCu.Style & ~kieuMoi;
                 else
-                    styleMoi = fontCu.Style | kieuMoi;  // Thêm
+                    styleMoi = fontCu.Style | kieuMoi;
 
                 rtbVanBan.SelectionFont = new Font(fontCu.FontFamily, fontCu.Size, styleMoi);
             }
         }
 
-        // Gán vào Button B
         private void btnBold_Click(object sender, EventArgs e) { DoiKieuChu(FontStyle.Bold); }
 
-        // Gán vào Button I
         private void btnItalic_Click(object sender, EventArgs e) { DoiKieuChu(FontStyle.Italic); }
 
-        // Gán vào Button U
         private void btnUnderline_Click(object sender, EventArgs e) { DoiKieuChu(FontStyle.Underline); }
 
-        // 6. CHỨC NĂNG MENU "ĐỊNH DẠNG FONT" (Dùng FontDialog)
         private void mnuDinhDangFont_Click(object sender, EventArgs e)
         {
-            // Lấy font hiện tại gán vào hộp thoại
             if (rtbVanBan.SelectionFont != null)
                 fontDialog1.Font = rtbVanBan.SelectionFont;
 
-            // Hiện hộp thoại
             if (fontDialog1.ShowDialog() == DialogResult.OK)
             {
                 rtbVanBan.SelectionFont = fontDialog1.Font;
 
-                // Cập nhật lại 2 cái ComboBox cho khớp
                 cmbFont.Text = fontDialog1.Font.Name;
                 cmbSize.Text = fontDialog1.Font.Size.ToString();
             }
         }
 
-        // 7. CHỨC NĂNG ĐỔI FONT/SIZE TRÊN TOOLBAR
-        // Gán vào sự kiện SelectedIndexChanged của cmbFont
         private void cmbFont_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (rtbVanBan.SelectionFont != null)
+            try
             {
-                rtbVanBan.SelectionFont = new Font(cmbFont.Text, rtbVanBan.SelectionFont.Size, rtbVanBan.SelectionFont.Style);
+                if (rtbVanBan.SelectionFont != null)
+                {
+                    string tenFont = cmbFont.Text;
+
+                    if (!cmbFont.Items.Contains(tenFont))
+                    {
+                        MessageBox.Show("Font chữ này không tồn tại trong hệ thống!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        cmbFont.Text = rtbVanBan.SelectionFont.Name;
+                        return;
+                    }
+                    rtbVanBan.SelectionFont = new Font(tenFont, rtbVanBan.SelectionFont.Size, rtbVanBan.SelectionFont.Style);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi định dạng Font: " + ex.Message);
             }
         }
 
-        // Gán vào sự kiện SelectedIndexChanged của cmbSize
         private void cmbSize_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (rtbVanBan.SelectionFont != null)
+            try
             {
-                float sizeMoi = float.Parse(cmbSize.Text);
-                rtbVanBan.SelectionFont = new Font(rtbVanBan.SelectionFont.FontFamily, sizeMoi, rtbVanBan.SelectionFont.Style);
+                if (rtbVanBan.SelectionFont != null)
+                {
+                    float sizeMoi;
+                    bool laSo = float.TryParse(cmbSize.Text, out sizeMoi);
+
+                    if (laSo == false)
+                    {
+                        MessageBox.Show("Vui lòng nhập kích cỡ là số!", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        cmbSize.Text = rtbVanBan.SelectionFont.Size.ToString();
+                        return;
+                    }
+
+                    if (sizeMoi <= 0)
+                    {
+                        MessageBox.Show("Kích cỡ chữ phải lớn hơn 0!", "Cảnh báo");
+                        cmbSize.Text = rtbVanBan.SelectionFont.Size.ToString();
+                        return;
+                    }
+                    rtbVanBan.SelectionFont = new Font(rtbVanBan.SelectionFont.FontFamily, sizeMoi, rtbVanBan.SelectionFont.Style);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi đổi kích cỡ: " + ex.Message);
             }
         }
 
-        // Menu Thoát
+        private void cmbFont_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+
+                string tenFont = cmbFont.Text;
+                if (!cmbFont.Items.Contains(tenFont))
+                {
+                    MessageBox.Show("Font này không tồn tại!", "Thông báo");
+                    if (rtbVanBan.SelectionFont != null)
+                        cmbFont.Text = rtbVanBan.SelectionFont.Name;
+                    return;
+                }
+
+                if (rtbVanBan.SelectionFont != null)
+                {
+                    Font currentFont = rtbVanBan.SelectionFont;
+                    rtbVanBan.SelectionFont = new Font(tenFont, currentFont.Size, currentFont.Style);
+                    rtbVanBan.Focus();
+                }
+            }
+        }
+
+        private void cmbSize_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                float sizeMoi;
+                bool laSo = float.TryParse(cmbSize.Text, out sizeMoi);
+
+                if (laSo == false || sizeMoi <= 0)
+                {
+                    MessageBox.Show("Cỡ chữ không hợp lệ!", "Thông báo");
+                    if (rtbVanBan.SelectionFont != null)
+                        cmbSize.Text = rtbVanBan.SelectionFont.Size.ToString();
+                    return;
+                }
+
+                if (rtbVanBan.SelectionFont != null)
+                {
+                    Font currentFont = rtbVanBan.SelectionFont;
+                    rtbVanBan.SelectionFont = new Font(currentFont.FontFamily, sizeMoi, currentFont.Style);
+                    rtbVanBan.Focus();
+                }
+            }
+        }
+
         private void mnuThoat_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void Form1_FormClosing_1(object sender, FormClosingEventArgs e)
+        {
+            if (rtbVanBan.TextLength > 0)
+            {
+                DialogResult ketQua = MessageBox.Show(
+                    "Văn bản chưa được lưu. Bạn có muốn lưu lại trước khi thoát không?",
+                    "Thông báo",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Warning);
+
+                if (ketQua == DialogResult.Yes)
+                {
+                    XuLyLuu(sender, e);
+                }
+                else if (ketQua == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }
